@@ -20,7 +20,7 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('tingly-git.init', gitInit),
         vscode.commands.registerCommand('tingly-git.addOrigin', gitAddOrigin),
         vscode.commands.registerCommand('tingly-git.addRemote', gitAddRemote),
-        vscode.commands.registerCommand('tingly-git.addFile', gitAddFile),
+        vscode.commands.registerCommand('tingly-git.addFile', (resource) => gitAddFile(resource)),
         vscode.commands.registerCommand('tingly-git.addAll', gitAddAll),
         vscode.commands.registerCommand('tingly-git.commit', gitCommit),
         vscode.commands.registerCommand('tingly-git.pull', gitPull),
@@ -30,7 +30,7 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('tingly-git.createBranch', gitCreateBranch),
         vscode.commands.registerCommand('tingly-git.checkoutBranch', gitCheckoutBranch),
         vscode.commands.registerCommand('tingly-git.logAll', gitLogAll),
-        vscode.commands.registerCommand('tingly-git.logCurrentFile', gitLogCurrentFile)
+        vscode.commands.registerCommand('tingly-git.logCurrentFile', () => gitLogCurrentFile())
     ];
 
     commands.forEach(command => context.subscriptions.push(command));
@@ -67,7 +67,7 @@ async function gitAddRemote() {
         placeHolder: 'upstream'
     });
 
-    if (!name) return;
+    if (!name) { return; }
 
     const url = await vscode.window.showInputBox({
         prompt: 'Enter the remote repository URL',
@@ -86,19 +86,38 @@ async function gitAddRemote() {
 
 async function gitAddFile(resource?: vscode.Uri) {
     let filePath: string | undefined;
+    let source = '';
 
     if (resource) {
-        // Called from context menu
+        // Called from context menu (explorer, editor, or tab)
         filePath = resource.fsPath;
+        source = 'context menu';
+        console.log(`Adding file from ${source}: ${filePath}`);
     } else if (vscode.window.activeTextEditor) {
         // Called from command palette with active file
         filePath = vscode.window.activeTextEditor.document.uri.fsPath;
+        source = 'command palette';
+        console.log(`Adding active file from ${source}: ${filePath}`);
     } else {
         vscode.window.showWarningMessage('No file selected');
         return;
     }
 
-    if (!filePath) return;
+    if (!filePath) {
+        console.log('No file path found');
+        return;
+    }
+
+    // Check if it's a directory
+    try {
+        const stats = await vscode.workspace.fs.stat(resource || vscode.Uri.file(filePath));
+        if (stats.type === vscode.FileType.Directory) {
+            source = source ? `${source} (directory)` : 'directory';
+            console.log(`Adding directory from ${source}: ${filePath}`);
+        }
+    } catch (error) {
+        // File might not exist, continue with add operation
+    }
 
     try {
         // Check if file is ignored by .gitignore
@@ -106,8 +125,11 @@ async function gitAddFile(resource?: vscode.Uri) {
 
         await git.add(filePath);
         const fileName = filePath.split('/').pop() || filePath;
-        vscode.window.showInformationMessage(`Added: ${fileName}`);
+        const fileType = (await vscode.workspace.fs.stat(vscode.Uri.file(filePath))).type === vscode.FileType.Directory ? 'directory' : 'file';
+        vscode.window.showInformationMessage(`Added ${fileType}: ${fileName}`);
+        console.log(`Successfully added ${fileType} from ${source}: ${fileName}`);
     } catch (error: any) {
+        console.error(`Failed to add ${filePath}:`, error);
         vscode.window.showErrorMessage(`Failed to add file: ${error.message}`);
     }
 }
@@ -322,4 +344,4 @@ async function checkGitIgnore(filePath: string): Promise<void> {
     }
 }
 
-export function deactivate() {}
+export function deactivate() { }

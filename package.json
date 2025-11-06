@@ -110,8 +110,7 @@
             "explorer/context": [
                 {
                     "command": "tingly-git.addFile",
-                    "group": "Tingly Git",
-                    "when": "explorerResourceIsFolder || explorerResourceIsFile"
+                    "group": "Tingly Git"
                 }
             ],
             "editor/context": [
@@ -122,6 +121,18 @@
                 {
                     "command": "tingly-git.logCurrentFile",
                     "group": "Tingly Git"
+                }
+            ],
+            "editor/title/context": [
+                {
+                    "command": "tingly-git.addFile",
+                    "group": "Tingly Git",
+                    "when": "resourceExtname"
+                },
+                {
+                    "command": "tingly-git.logCurrentFile",
+                    "group": "Tingly Git",
+                    "when": "resourceExtname"
                 }
             ]
         }
