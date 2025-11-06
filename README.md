@@ -47,6 +47,10 @@ Right-click in the editor to access:
 - Git: Add File/Directory
 - Git: Log Current File
 
+Right-click on editor tabs to access:
+- Git: Add File/Directory
+- Git: Log Current File
+
 ## Gitignore Validation
 
 When you try to add a file that's ignored by .gitignore, Tingly Git will:
