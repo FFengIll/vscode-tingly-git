@@ -1,7 +1,7 @@
 {
     "name": "tingly-git",
-    "displayName": "Tingly-Git",
-    "description": "",
+    "displayName": "Tingly Git",
+    "description": "Easy Git commands with context menu support and gitignore validation",
     "version": "0.0.1",
     "author": {
         "name": "Tingly"
@@ -16,23 +16,128 @@
     "categories": [
         "Other"
     ],
-    "activationEvents": [],
+    "activationEvents": [
+        "onCommand:tingly-git.init",
+        "onCommand:tingly-git.addOrigin",
+        "onCommand:tingly-git.addRemote",
+        "onCommand:tingly-git.addFile",
+        "onCommand:tingly-git.addAll",
+        "onCommand:tingly-git.commit",
+        "onCommand:tingly-git.pull",
+        "onCommand:tingly-git.push",
+        "onCommand:tingly-git.pushToRemote",
+        "onCommand:tingly-git.status",
+        "onCommand:tingly-git.createBranch",
+        "onCommand:tingly-git.checkoutBranch",
+        "onCommand:tingly-git.logAll",
+        "onCommand:tingly-git.logCurrentFile"
+    ],
     "main": "./out/extension.js",
     "contributes": {
         "commands": [
             {
-                "command": "tingly-git.helloWorld",
-                "title": "Hello World"
+                "command": "tingly-git.init",
+                "title": "Git: Initialize Repository",
+                "category": "Tingly Git"
+            },
+            {
+                "command": "tingly-git.addOrigin",
+                "title": "Git: Add Origin Remote",
+                "category": "Tingly Git"
+            },
+            {
+                "command": "tingly-git.addRemote",
+                "title": "Git: Add Remote",
+                "category": "Tingly Git"
+            },
+            {
+                "command": "tingly-git.addFile",
+                "title": "Git: Add File/Directory",
+                "category": "Tingly Git"
+            },
+            {
+                "command": "tingly-git.addAll",
+                "title": "Git: Add All Modified",
+                "category": "Tingly Git"
+            },
+            {
+                "command": "tingly-git.commit",
+                "title": "Git: Commit",
+                "category": "Tingly Git"
+            },
+            {
+                "command": "tingly-git.pull",
+                "title": "Git: Pull Current Branch from Origin",
+                "category": "Tingly Git"
+            },
+            {
+                "command": "tingly-git.push",
+                "title": "Git: Push Current Branch to Origin",
+                "category": "Tingly Git"
+            },
+            {
+                "command": "tingly-git.pushToRemote",
+                "title": "Git: Push Current Branch (to any remote)",
+                "category": "Tingly Git"
+            },
+            {
+                "command": "tingly-git.status",
+                "title": "Git: Status",
+                "category": "Tingly Git"
+            },
+            {
+                "command": "tingly-git.createBranch",
+                "title": "Git: Create New Branch",
+                "category": "Tingly Git"
+            },
+            {
+                "command": "tingly-git.checkoutBranch",
+                "title": "Git: Change/Checkout Branch",
+                "category": "Tingly Git"
+            },
+            {
+                "command": "tingly-git.logAll",
+                "title": "Git: Log All",
+                "category": "Tingly Git"
+            },
+            {
+                "command": "tingly-git.logCurrentFile",
+                "title": "Git: Log Current File",
+                "category": "Tingly Git"
             }
-        ]
+        ],
+        "menus": {
+            "explorer/context": [
+                {
+                    "command": "tingly-git.addFile",
+                    "group": "Tingly Git",
+                    "when": "explorerResourceIsFolder || explorerResourceIsFile"
+                }
+            ],
+            "editor/context": [
+                {
+                    "command": "tingly-git.addFile",
+                    "group": "Tingly Git"
+                },
+                {
+                    "command": "tingly-git.logCurrentFile",
+                    "group": "Tingly Git"
+                }
+            ]
+        }
     },
     "scripts": {
-        "vscode:prepublish": "pnpm run compile",
+        "vscode:prepublish": "npm run compile",
         "compile": "tsc -p ./",
         "watch": "tsc -watch -p ./",
-        "pretest": "pnpm run compile && pnpm run lint",
+        "pretest": "npm run compile && npm run lint",
         "lint": "eslint src",
-        "test": "vscode-test"
+        "test": "vscode-test",
+        "package": "vsce package",
+        "publish": "vsce publish"
+    },
+    "dependencies": {
+        "simple-git": "^3.20.0"
     },
     "devDependencies": {
         "@types/vscode": "^1.90.0",

@@ -1,71 +1,87 @@
-# tingly-git README
+# Tingly Git
 
-This is the README for your extension "tingly-git". After writing up a brief description, we recommend including the following sections.
+A powerful Git extension for VS Code that provides easy Git commands with context menu support and smart gitignore validation.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- **Git Commands**: All essential Git operations (init, add, commit, push, pull, status, branch, log)
+- **Context Menu Support**: Right-click on files and folders for quick Git operations
+- **Gitignore Validation**: Smart detection when trying to add ignored files with option to force add
+- **User-Friendly Interface**: Native VS Code dialogs and quick picks for all operations
+- **Error Handling**: Comprehensive error messages for all Git operations
 
-For example if there is an image subfolder under your extension project workspace:
+### Available Commands
 
-\!\[feature X\]\(images/feature-x.png\)
+**Repository Management:**
+- Git: Initialize Repository
+- Git: Add Origin Remote
+- Git: Add Remote
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+**File Operations:**
+- Git: Add File/Directory (context menu)
+- Git: Add All Modified
+
+**Commit & Sync:**
+- Git: Commit
+- Git: Pull Current Branch from Origin
+- Git: Push Current Branch to Origin
+- Git: Push Current Branch (to any remote)
+
+**Branching:**
+- Git: Create New Branch
+- Git: Change/Checkout Branch
+
+**History:**
+- Git: Log All
+- Git: Log Current File
+
+**Status:**
+- Git: Status
+
+## Context Menu Integration
+
+Right-click on files or folders in the explorer to access:
+- Git: Add File/Directory
+
+Right-click in the editor to access:
+- Git: Add File/Directory
+- Git: Log Current File
+
+## Gitignore Validation
+
+When you try to add a file that's ignored by .gitignore, Tingly Git will:
+- Show a warning message
+- Give you the option to force add the file
+- Explain why the file is being ignored
 
 ## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+- VS Code 1.90.0 or higher
+- Git installed on your system
 
-## Extension Settings
+## Installation
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+1. Download the `.vsix` file from the Releases page
+2. In VS Code, go to Extensions (Ctrl+Shift+X)
+3. Click the "..." menu and select "Install from VSIX..."
+4. Select the downloaded `.vsix` file
 
-For example:
+## Usage
 
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
+1. Open a folder in VS Code
+2. Use the Command Palette (Ctrl+Shift+P) and search for "Tingly Git"
+3. Or right-click on files/folders in the explorer for quick operations
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
+### 0.0.1
+- Initial release
+- All basic Git commands implemented
+- Context menu support for files and folders
+- Gitignore validation with force add option
+- Branch creation and checkout functionality
+- Git log commands for repository and individual files
 
-### 1.0.0
+## Support
 
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+If you encounter any issues or have feature requests, please report them on the [GitHub repository](https://github.com/FFengIll/vscode-tingly-git).
