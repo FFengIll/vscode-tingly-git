@@ -9,7 +9,7 @@
     "repository": {
         "url": "https://github.com/FFengIll/vscode-tingly-git"
     },
-    "publisher": "Tingly",
+    "publisher": "Tingly-Dev",
     "engines": {
         "vscode": "^1.90.0"
     },
