@@ -2,7 +2,7 @@
     "name": "tingly-git",
     "displayName": "Tingly Git",
     "description": "Easy Git commands with context menu support and gitignore validation",
-    "version": "0.0.1",
+    "version": "0.25.121014",
     "author": {
         "name": "Tingly"
     },

@@ -78,6 +78,9 @@ When you try to add a file that's ignored by .gitignore, Tingly Git will:
 
 ## Release Notes
 
+### 0.25.121014
+- Support to manage .gitignore including templates from toptal
+
 ### 0.0.1
 - Initial release
 - All basic Git commands implemented
