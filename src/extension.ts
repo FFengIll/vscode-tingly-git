@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import simpleGit, { SimpleGit } from 'simple-git';
-
+import { toptalTemplates } from './toptal_ist';
 let git: SimpleGit;
 
 export function activate(context: vscode.ExtensionContext) {
@@ -30,7 +30,8 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('tingly-git.createBranch', gitCreateBranch),
         vscode.commands.registerCommand('tingly-git.checkoutBranch', gitCheckoutBranch),
         vscode.commands.registerCommand('tingly-git.logAll', gitLogAll),
-        vscode.commands.registerCommand('tingly-git.logCurrentFile', () => gitLogCurrentFile())
+        vscode.commands.registerCommand('tingly-git.logCurrentFile', () => gitLogCurrentFile()),
+        vscode.commands.registerCommand('tingly-git.gitignore', gitignore)
     ];
 
     commands.forEach(command => context.subscriptions.push(command));
@@ -341,6 +342,140 @@ async function checkGitIgnore(filePath: string): Promise<void> {
             return;
         }
         throw error;
+    }
+}
+
+async function gitignore() {
+    try {
+        const workspaceFolders = vscode.workspace.workspaceFolders;
+        if (!workspaceFolders || workspaceFolders.length === 0) {
+            vscode.window.showErrorMessage('No workspace folder found');
+            return;
+        }
+
+        const workspaceRoot = workspaceFolders[0].uri.fsPath;
+        const gitignorePath = `${workspaceRoot}/.gitignore`;
+
+        // Check if .gitignore exists, create if not
+        try {
+            await vscode.workspace.fs.stat(vscode.Uri.file(gitignorePath));
+        } catch {
+            // File doesn't exist
+            const createAction = await vscode.window.showInformationMessage(
+                '.gitignore file not found. Create one?',
+                'Create',
+                'Cancel'
+            );
+
+            if (createAction !== 'Create') {
+                return;
+            }
+
+            try {
+                await vscode.workspace.fs.writeFile(
+                    vscode.Uri.file(gitignorePath),
+                    new TextEncoder().encode('# Git ignore file\n')
+                );
+                vscode.window.showInformationMessage('.gitignore file created successfully!');
+            } catch (error: any) {
+                vscode.window.showErrorMessage(`Failed to create .gitignore: ${error.message}`);
+                return;
+            }
+        }
+
+        // Show action menu
+        const action = await vscode.window.showQuickPick([
+            'Add template from collection',
+            'View current .gitignore',
+            'Edit .gitignore'
+        ], {
+            placeHolder: 'Select an action for .gitignore'
+        });
+
+        if (!action) return;
+
+        switch (action) {
+            case 'Add template from collection':
+                await addGitignoreTemplate(gitignorePath);
+                break;
+            case 'View current .gitignore':
+                await viewGitignore(gitignorePath);
+                break;
+            case 'Edit .gitignore':
+                await vscode.commands.executeCommand('vscode.open', vscode.Uri.file(gitignorePath));
+                break;
+        }
+    } catch (error: any) {
+        vscode.window.showErrorMessage(`Failed to manage .gitignore: ${error.message}`);
+    }
+}
+
+async function addGitignoreTemplate(gitignorePath: string) {
+    try {
+        // Available gitignore templates from toptal API
+        const availableTemplates = toptalTemplates;
+
+        const selectedTemplates = await vscode.window.showQuickPick(availableTemplates, {
+            placeHolder: 'Search and select gitignore template(s)',
+            canPickMany: true
+        });
+
+        if (!selectedTemplates || selectedTemplates.length === 0) {
+            return;
+        }
+
+        // Fetch templates from toptal API
+        const templatesToFetch = selectedTemplates.join(',');
+        const templateUrl = `https://www.toptal.com/developers/gitignore/api/${templatesToFetch}`;
+
+        vscode.window.showInformationMessage('Fetching gitignore template(s)...', 'Downloading...');
+
+        const response = await fetch(templateUrl);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const templateContent = await response.text();
+
+        // Read existing gitignore content
+        let existingContent = '';
+        try {
+            const existingData = await vscode.workspace.fs.readFile(vscode.Uri.file(gitignorePath));
+            existingContent = new TextDecoder().decode(existingData);
+        } catch {
+            // File doesn't exist or can't be read
+        }
+
+        // Combine existing content with new template
+        let newContent = existingContent.trim();
+        if (newContent && !newContent.endsWith('\n')) {
+            newContent += '\n';
+        }
+        newContent += '\n# Added by Tingly Git extension - ' + new Date().toISOString().split('T')[0] + '\n';
+        newContent += `# Templates: ${selectedTemplates.join(', ')}\n`;
+        newContent += templateContent;
+
+        // Write the updated content
+        await vscode.workspace.fs.writeFile(
+            vscode.Uri.file(gitignorePath),
+            new TextEncoder().encode(newContent)
+        );
+
+        vscode.window.showInformationMessage(
+            `Successfully added ${selectedTemplates.length} gitignore template(s) to .gitignore`
+        );
+
+    } catch (error: any) {
+        vscode.window.showErrorMessage(`Failed to add gitignore template: ${error.message}`);
+    }
+}
+
+async function viewGitignore(gitignorePath: string) {
+    try {
+        const gitignoreUri = vscode.Uri.file(gitignorePath);
+        await vscode.commands.executeCommand('vscode.open', gitignoreUri);
+    } catch (error: any) {
+        vscode.window.showErrorMessage(`Failed to open .gitignore: ${error.message}`);
     }
 }
 
