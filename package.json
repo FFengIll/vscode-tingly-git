@@ -31,7 +31,7 @@
         "onCommand:tingly-git.checkoutBranch",
         "onCommand:tingly-git.logAll",
         "onCommand:tingly-git.logCurrentFile",
-        "onCommand:tingly-git.manageGitignore"
+        "onCommand:tingly-git.gitignore"
     ],
     "main": "./out/extension.js",
     "contributes": {
@@ -107,7 +107,7 @@
                 "category": "Tingly Git"
             },
             {
-                "command": "tingly-git.manageGitignore",
+                "command": "tingly-git.gitignore",
                 "title": "Git: Manage .gitignore",
                 "category": "Tingly Git"
             }
