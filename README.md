@@ -1,94 +1,72 @@
 # Tingly Git
 
-A powerful Git extension for VS Code that provides easy Git commands with context menu support and smart gitignore validation.
+A VS Code extension that provides essential Git commands with context menu support and smart .gitignore management.
+
+![](resource/preview.png)
 
 ## Features
 
-- **Git Commands**: All essential Git operations (init, add, commit, push, pull, status, branch, log)
+- **Git Commands**: Repository initialization, file operations, commit, push, pull, branching, and history
 - **Context Menu Support**: Right-click on files and folders for quick Git operations
-- **Gitignore Validation**: Smart detection when trying to add ignored files with option to force add
-- **User-Friendly Interface**: Native VS Code dialogs and quick picks for all operations
-- **Error Handling**: Comprehensive error messages for all Git operations
+- **Gitignore Management**: Complete .gitignore management with 180+ professional templates from Toptal
+- **Smart Validation**: Detects ignored files with option to force add
 
-### Available Commands
+### Commands
 
-**Repository Management:**
-- Git: Initialize Repository
-- Git: Add Origin Remote
-- Git: Add Remote
+All Git operations are available via Command Palette (Ctrl+Shift+P) → "Git:":
 
-**File Operations:**
-- Git: Add File/Directory (context menu)
-- Git: Add All Modified
+- Repository: Initialize, Add Remote
+- Files: Add File/Directory, Add All Modified
+- Sync: Commit, Push, Pull
+- Branching: Create, Checkout
+- History: Log (All, Current File)
+- Status: Check repository status
+- Gitignore: Manage .gitignore templates
 
-**Commit & Sync:**
-- Git: Commit
-- Git: Pull Current Branch from Origin
-- Git: Push Current Branch to Origin
-- Git: Push Current Branch (to any remote)
+### Context Menu
 
-**Branching:**
-- Git: Create New Branch
-- Git: Change/Checkout Branch
+Right-click on:
+- Files/Folders in explorer → "Git: Add File/Directory"
+- Editor/tabs → "Git: Add File/Directory", "Git: Log Current File"
 
-**History:**
-- Git: Log All
-- Git: Log Current File
+### Gitignore Templates
 
-**Status:**
-- Git: Status
+Access 180+ professional gitignore templates covering:
+- Programming languages (Python, JavaScript, Java, etc.)
+- Frameworks (React, Vue, Django, etc.)
+- Tools & IDEs (VS Code, IntelliJ, Docker, etc.)
+- Build systems (npm, Maven, Gradle, etc.)
+- Operating systems (Windows, macOS, Linux)
 
-## Context Menu Integration
+## Usage
 
-Right-click on files or folders in the explorer to access:
-- Git: Add File/Directory
+1. Install the extension from VSIX file
+2. Open Command Palette (Ctrl+Shift+P)
+3. Search for Git commands or use context menus
+4. For gitignore: Search "Git: Manage .gitignore" to browse and add templates
 
-Right-click in the editor to access:
-- Git: Add File/Directory
-- Git: Log Current File
-
-Right-click on editor tabs to access:
-- Git: Add File/Directory
-- Git: Log Current File
-
-## Gitignore Validation
-
-When you try to add a file that's ignored by .gitignore, Tingly Git will:
-- Show a warning message
-- Give you the option to force add the file
-- Explain why the file is being ignored
-
-## Requirements
+### Requirements
 
 - VS Code 1.90.0 or higher
 - Git installed on your system
 
-## Installation
-
-1. Download the `.vsix` file from the Releases page
-2. In VS Code, go to Extensions (Ctrl+Shift+X)
-3. Click the "..." menu and select "Install from VSIX..."
-4. Select the downloaded `.vsix` file
-
-## Usage
-
-1. Open a folder in VS Code
-2. Use the Command Palette (Ctrl+Shift+P) and search for "Tingly Git"
-3. Or right-click on files/folders in the explorer for quick operations
-
 ## Release Notes
 
-### 0.25.121014
-- Support to manage .gitignore including templates from toptal
+### 0.25.121015
+- **Major Feature**: Comprehensive .gitignore management system
+  - Added 180+ professional gitignore templates from Toptal's collection
+  - Automatic .gitignore creation when missing
+  - Smart template merging with timestamp and source tracking
+  - Enhanced user experience for template browsing and selection
 
 ### 0.0.1
 - Initial release
-- All basic Git commands implemented
-- Context menu support for files and folders
-- Gitignore validation with force add option
-- Branch creation and checkout functionality
-- Git log commands for repository and individual files
+  - All basic Git commands implemented
+  - Context menu support for files and folders
+  - Gitignore validation with force add option
+  - Branch creation and checkout functionality
+  - Git log commands for repository and individual files
 
 ## Support
 
-If you encounter any issues or have feature requests, please report them on the [GitHub repository](https://github.com/FFengIll/vscode-tingly-git).
+Report issues on [GitHub](https://github.com/FFengIll/vscode-tingly-git)
