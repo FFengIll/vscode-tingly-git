@@ -141,7 +141,21 @@
                     "when": "resourceExtname"
                 }
             ]
-        }
+        },
+        "keybindings": [
+            {
+                "command": "tingly-git.addFile",
+                "key": "ctrl+shift+a",
+                "mac": "cmd+shift+a",
+                "when": "editorIsOpen || explorerViewletFocus"
+            },
+            {
+                "command": "tingly-git.addFile",
+                "key": "ctrl+shift+a",
+                "mac": "cmd+shift+a",
+                "when": "explorerResourceIsFolder || explorerResourceIsRoot"
+            }
+        ]
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",

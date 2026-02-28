@@ -94,14 +94,34 @@ async function gitAddFile(resource?: vscode.Uri) {
         filePath = resource.fsPath;
         source = 'context menu';
         console.log(`Adding file from ${source}: ${filePath}`);
-    } else if (vscode.window.activeTextEditor) {
-        // Called from command palette with active file
-        filePath = vscode.window.activeTextEditor.document.uri.fsPath;
-        source = 'command palette';
-        console.log(`Adding active file from ${source}: ${filePath}`);
     } else {
-        vscode.window.showWarningMessage('No file selected');
-        return;
+        // Try to get selected resource from explorer using clipboard trick
+        // Save current clipboard content
+        const originalClipboard = await vscode.env.clipboard.readText();
+
+        // Copy the path of selected explorer item
+        await vscode.commands.executeCommand('copyFilePath');
+        const copiedPath = await vscode.env.clipboard.readText();
+
+        // Restore original clipboard content
+        if (originalClipboard) {
+            await vscode.env.clipboard.writeText(originalClipboard);
+        }
+
+        if (copiedPath && copiedPath !== originalClipboard) {
+            // Got path from explorer selection
+            filePath = copiedPath;
+            source = 'explorer selection';
+            console.log(`Adding from ${source}: ${filePath}`);
+        } else if (vscode.window.activeTextEditor) {
+            // Fallback to active editor
+            filePath = vscode.window.activeTextEditor.document.uri.fsPath;
+            source = 'active editor';
+            console.log(`Adding active file from ${source}: ${filePath}`);
+        } else {
+            vscode.window.showWarningMessage('No file selected. Use right-click context menu or open a file in the editor.');
+            return;
+        }
     }
 
     if (!filePath) {
