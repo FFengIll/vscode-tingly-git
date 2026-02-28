@@ -17,6 +17,7 @@
         "Other"
     ],
     "activationEvents": [
+        "workspaceContains:.git",
         "onCommand:tingly-git.init",
         "onCommand:tingly-git.addOrigin",
         "onCommand:tingly-git.addRemote",

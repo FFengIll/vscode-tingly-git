@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import simpleGit, { SimpleGit } from 'simple-git';
 import { toptalTemplates } from './toptal_ist';
+import { StagedFilesCompletionProvider } from './completionProvider';
 let git: SimpleGit;
 
 export function activate(context: vscode.ExtensionContext) {
@@ -14,6 +15,15 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.window.showErrorMessage('No workspace folder found');
         return;
     }
+
+    // Register staged files completion provider for SCM input
+    const completionProvider = new StagedFilesCompletionProvider(git);
+    const completionDisposable = vscode.languages.registerCompletionItemProvider(
+        { language: 'scminput' },
+        completionProvider
+        // No trigger characters - allow manual trigger anytime
+    );
+    context.subscriptions.push(completionDisposable);
 
     // Register all Git commands
     const commands = [
