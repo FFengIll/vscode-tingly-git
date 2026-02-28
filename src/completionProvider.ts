@@ -39,17 +39,26 @@ export class StagedFilesCompletionProvider implements vscode.CompletionItemProvi
                 ? stagedFiles.filter(f => f.toLowerCase().includes(currentWord.toLowerCase()))
                 : stagedFiles;
 
+            if (filteredFiles.length === 0) {
+                return [];
+            }
+
             return filteredFiles.map(file => {
                 const item = new vscode.CompletionItem(file, vscode.CompletionItemKind.File);
                 item.detail = 'Staged';
-                // Replace the current word with the file path
+
+                // Always set range - either replace current word or insert at cursor
                 if (currentWord && wordMatch) {
                     const start = position.character - currentWord.length;
                     item.range = new vscode.Range(
                         new vscode.Position(position.line, start),
                         position
                     );
+                } else {
+                    // Insert at cursor position when no word being typed
+                    item.range = new vscode.Range(position, position);
                 }
+
                 return item;
             });
         } catch (error) {
