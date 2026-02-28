@@ -2,7 +2,8 @@
 
 A VS Code extension that provides essential Git commands with context menu support, smart .gitignore management, and commit message autocompletion.
 
-![](resource/preview.png)
+![](resource/preview.scm.png)
+![](resource/preview.png) 
 
 ## Features
 
