@@ -2,7 +2,7 @@
     "name": "tingly-git",
     "displayName": "Tingly Git",
     "description": "Easy Git commands with context menu support and gitignore validation",
-    "version": "0.260228.1800",
+    "version": "0.260228.1900",
     "author": {
         "name": "Tingly"
     },
@@ -16,6 +16,7 @@
     "categories": [
         "Other"
     ],
+    "icon": "resource/gear-stick-pattern.png",
     "activationEvents": [
         "workspaceContains:.git",
         "onCommand:tingly-git.init",
