@@ -1,6 +1,6 @@
 # Tingly Git
 
-A VS Code extension that provides essential Git commands with context menu support and smart .gitignore management.
+A VS Code extension that provides essential Git commands with context menu support, smart .gitignore management, and commit message autocompletion.
 
 ![](resource/preview.png)
 
@@ -9,6 +9,7 @@ A VS Code extension that provides essential Git commands with context menu suppo
 - **Git Commands**: Repository initialization, file operations, commit, push, pull, branching, and history
 - **Context Menu Support**: Right-click on files and folders for quick Git operations
 - **Gitignore Management**: Complete .gitignore management with 180+ professional templates from Toptal
+- **Commit Message Autocomplete**: Smart file path completion in SCM commit input box
 - **Smart Validation**: Detects ignored files with option to force add
 
 ### Commands
@@ -38,6 +39,14 @@ Access 180+ professional gitignore templates covering:
 - Build systems (npm, Maven, Gradle, etc.)
 - Operating systems (Windows, macOS, Linux)
 
+### Commit Message Autocomplete
+
+When writing commit messages in the SCM input box:
+- Press `Ctrl+Space` or `Cmd+I` to trigger suggestions
+- Shows all staged files for quick reference
+- Type to fuzzy-filter file paths (matches anywhere in the path)
+- Select a file to insert its path into the message
+
 ## Usage
 
 1. Install the extension from VSIX file
@@ -51,6 +60,12 @@ Access 180+ professional gitignore templates covering:
 - Git installed on your system
 
 ## Release Notes
+
+### 0.260228.1800
+- **Commit Message Autocomplete**: Smart file path completion in SCM commit input
+  - Press `Ctrl+Space` or `Cmd+I` to call `Trigger Suggestion` to list staged files
+  - Fuzzy filtering - type anywhere to filter paths
+  - Quick file path insertion for better commit messages
 
 ### 0.25.121015
 - **Major Feature**: Comprehensive .gitignore management system
