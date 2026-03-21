@@ -19,19 +19,8 @@
     "icon": "resource/gear-stick-pattern.png",
     "activationEvents": [
         "workspaceContains:.git",
-        "onCommand:tingly-git.init",
-        "onCommand:tingly-git.addOrigin",
         "onCommand:tingly-git.addRemote",
         "onCommand:tingly-git.addFile",
-        "onCommand:tingly-git.addAll",
-        "onCommand:tingly-git.commit",
-        "onCommand:tingly-git.pull",
-        "onCommand:tingly-git.push",
-        "onCommand:tingly-git.pushToRemote",
-        "onCommand:tingly-git.status",
-        "onCommand:tingly-git.createBranch",
-        "onCommand:tingly-git.checkoutBranch",
-        "onCommand:tingly-git.logAll",
         "onCommand:tingly-git.logCurrentFile",
         "onCommand:tingly-git.gitignore"
     ],
@@ -39,68 +28,13 @@
     "contributes": {
         "commands": [
             {
-                "command": "tingly-git.init",
-                "title": "Git: Initialize Repository",
-                "category": "Tingly Git"
-            },
-            {
-                "command": "tingly-git.addOrigin",
-                "title": "Git: Add Origin Remote",
-                "category": "Tingly Git"
-            },
-            {
-                "command": "tingly-git.addRemote",
-                "title": "Git: Add Remote",
-                "category": "Tingly Git"
-            },
-            {
                 "command": "tingly-git.addFile",
                 "title": "Git: Add File/Directory",
                 "category": "Tingly Git"
             },
             {
-                "command": "tingly-git.addAll",
-                "title": "Git: Add All Modified",
-                "category": "Tingly Git"
-            },
-            {
-                "command": "tingly-git.commit",
-                "title": "Git: Commit",
-                "category": "Tingly Git"
-            },
-            {
-                "command": "tingly-git.pull",
-                "title": "Git: Pull Current Branch from Origin",
-                "category": "Tingly Git"
-            },
-            {
-                "command": "tingly-git.push",
-                "title": "Git: Push Current Branch to Origin",
-                "category": "Tingly Git"
-            },
-            {
-                "command": "tingly-git.pushToRemote",
-                "title": "Git: Push Current Branch (to any remote)",
-                "category": "Tingly Git"
-            },
-            {
-                "command": "tingly-git.status",
-                "title": "Git: Status",
-                "category": "Tingly Git"
-            },
-            {
-                "command": "tingly-git.createBranch",
-                "title": "Git: Create New Branch",
-                "category": "Tingly Git"
-            },
-            {
-                "command": "tingly-git.checkoutBranch",
-                "title": "Git: Change/Checkout Branch",
-                "category": "Tingly Git"
-            },
-            {
-                "command": "tingly-git.logAll",
-                "title": "Git: Log All",
+                "command": "tingly-git.addRemote",
+                "title": "Git: Add Remote",
                 "category": "Tingly Git"
             },
             {

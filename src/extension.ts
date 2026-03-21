@@ -27,19 +27,8 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Register all Git commands
     const commands = [
-        vscode.commands.registerCommand('tingly-git.init', gitInit),
-        vscode.commands.registerCommand('tingly-git.addOrigin', gitAddOrigin),
-        vscode.commands.registerCommand('tingly-git.addRemote', gitAddRemote),
         vscode.commands.registerCommand('tingly-git.addFile', (resource) => gitAddFile(resource)),
-        vscode.commands.registerCommand('tingly-git.addAll', gitAddAll),
-        vscode.commands.registerCommand('tingly-git.commit', gitCommit),
-        vscode.commands.registerCommand('tingly-git.pull', gitPull),
-        vscode.commands.registerCommand('tingly-git.push', gitPush),
-        vscode.commands.registerCommand('tingly-git.pushToRemote', gitPushToRemote),
-        vscode.commands.registerCommand('tingly-git.status', gitStatus),
-        vscode.commands.registerCommand('tingly-git.createBranch', gitCreateBranch),
-        vscode.commands.registerCommand('tingly-git.checkoutBranch', gitCheckoutBranch),
-        vscode.commands.registerCommand('tingly-git.logAll', gitLogAll),
+        vscode.commands.registerCommand('tingly-git.addRemote', gitAddRemote),
         vscode.commands.registerCommand('tingly-git.logCurrentFile', () => gitLogCurrentFile()),
         vscode.commands.registerCommand('tingly-git.gitignore', gitignore)
     ];
@@ -47,50 +36,30 @@ export function activate(context: vscode.ExtensionContext) {
     commands.forEach(command => context.subscriptions.push(command));
 }
 
-async function gitInit() {
-    try {
-        await git.init();
-        vscode.window.showInformationMessage('Git repository initialized successfully!');
-    } catch (error: any) {
-        vscode.window.showErrorMessage(`Failed to initialize git repository: ${error.message}`);
-    }
-}
-
-async function gitAddOrigin() {
-    const url = await vscode.window.showInputBox({
-        prompt: 'Enter the origin repository URL',
-        placeHolder: 'https://github.com/username/repository.git'
-    });
-
-    if (url) {
-        try {
-            await git.addRemote('origin', url);
-            vscode.window.showInformationMessage(`Origin added: ${url}`);
-        } catch (error: any) {
-            vscode.window.showErrorMessage(`Failed to add origin: ${error.message}`);
-        }
-    }
-}
-
 async function gitAddRemote() {
     const name = await vscode.window.showInputBox({
-        prompt: 'Enter the remote name',
-        placeHolder: 'upstream'
+        prompt: 'Enter the remote name (leave empty for "origin")',
+        placeHolder: 'origin'
     });
 
-    if (!name) { return; }
+    if (!name) {
+        // User cancelled or wants origin
+        return;
+    }
+
+    const remoteName = name.trim() || 'origin';
 
     const url = await vscode.window.showInputBox({
-        prompt: 'Enter the remote repository URL',
+        prompt: `Enter the URL for remote "${remoteName}"`,
         placeHolder: 'https://github.com/username/repository.git'
     });
 
     if (url) {
         try {
-            await git.addRemote(name, url);
-            vscode.window.showInformationMessage(`Remote '${name}' added: ${url}`);
+            await git.addRemote(remoteName, url);
+            vscode.window.showInformationMessage(`Remote '${remoteName}' added: ${url}`);
         } catch (error: any) {
-            vscode.window.showErrorMessage(`Failed to add remote '${name}': ${error.message}`);
+            vscode.window.showErrorMessage(`Failed to add remote '${remoteName}': ${error.message}`);
         }
     }
 }
@@ -162,156 +131,6 @@ async function gitAddFile(resource?: vscode.Uri) {
     } catch (error: any) {
         console.error(`Failed to add ${filePath}:`, error);
         vscode.window.showErrorMessage(`Failed to add file: ${error.message}`);
-    }
-}
-
-async function gitAddAll() {
-    try {
-        const status = await git.status();
-        if (status.modified.length === 0 && status.not_added.length === 0) {
-            vscode.window.showInformationMessage('No changes to add');
-            return;
-        }
-
-        await git.add(['.']);
-        vscode.window.showInformationMessage('All modified files added to staging area');
-    } catch (error: any) {
-        vscode.window.showErrorMessage(`Failed to add all files: ${error.message}`);
-    }
-}
-
-async function gitCommit() {
-    const message = await vscode.window.showInputBox({
-        prompt: 'Enter commit message',
-        placeHolder: 'Your commit message'
-    });
-
-    if (!message) {
-        vscode.window.showWarningMessage('Commit message is required');
-        return;
-    }
-
-    try {
-        await git.commit(message);
-        vscode.window.showInformationMessage(`Committed: ${message}`);
-    } catch (error: any) {
-        vscode.window.showErrorMessage(`Failed to commit: ${error.message}`);
-    }
-}
-
-async function gitPull() {
-    try {
-        await git.pull('origin', 'HEAD');
-        vscode.window.showInformationMessage('Pulled from origin successfully');
-    } catch (error: any) {
-        vscode.window.showErrorMessage(`Failed to pull from origin: ${error.message}`);
-    }
-}
-
-async function gitPush() {
-    try {
-        const status = await git.status();
-        const currentBranch = status.current || 'main';
-        await git.push('origin', currentBranch);
-        vscode.window.showInformationMessage(`Pushed to origin/${currentBranch}`);
-    } catch (error: any) {
-        vscode.window.showErrorMessage(`Failed to push to origin: ${error.message}`);
-    }
-}
-
-async function gitPushToRemote() {
-    try {
-        const remotes = await git.getRemotes(true);
-        if (remotes.length === 0) {
-            vscode.window.showWarningMessage('No remotes found');
-            return;
-        }
-
-        const remoteNames = remotes.map(r => r.name);
-        const selectedRemote = await vscode.window.showQuickPick(remoteNames, {
-            placeHolder: 'Select remote to push to'
-        });
-
-        if (!selectedRemote) return;
-
-        const status = await git.status();
-        const currentBranch = status.current || 'main';
-        await git.push(selectedRemote, currentBranch);
-        vscode.window.showInformationMessage(`Pushed to ${selectedRemote}/${currentBranch}`);
-    } catch (error: any) {
-        vscode.window.showErrorMessage(`Failed to push: ${error.message}`);
-    }
-}
-
-async function gitStatus() {
-    try {
-        const status = await git.status();
-        const output = [
-            `Current branch: ${status.current}`,
-            `Modified: ${status.modified.length} files`,
-            `Added: ${status.created.length} files`,
-            `Deleted: ${status.deleted.length} files`,
-            `Untracked: ${status.not_added.length} files`,
-            '',
-            'Modified files:',
-            ...status.modified.map((f: string) => `  - ${f}`),
-            '',
-            'Untracked files:',
-            ...status.not_added.map((f: string) => `  - ${f}`)
-        ].filter(line => line).join('\n');
-
-        const doc = await vscode.workspace.openTextDocument({ content: output, language: 'plaintext' });
-        await vscode.window.showTextDocument(doc);
-    } catch (error: any) {
-        vscode.window.showErrorMessage(`Failed to get status: ${error.message}`);
-    }
-}
-
-async function gitCreateBranch() {
-    const branchName = await vscode.window.showInputBox({
-        prompt: 'Enter new branch name',
-        placeHolder: 'feature/new-feature'
-    });
-
-    if (!branchName) return;
-
-    try {
-        await git.checkoutLocalBranch(branchName);
-        vscode.window.showInformationMessage(`Created and switched to branch: ${branchName}`);
-    } catch (error: any) {
-        vscode.window.showErrorMessage(`Failed to create branch: ${error.message}`);
-    }
-}
-
-async function gitCheckoutBranch() {
-    try {
-        const branches = await git.branchLocal();
-        const allBranches = [...branches.all];
-
-        const selectedBranch = await vscode.window.showQuickPick(allBranches, {
-            placeHolder: 'Select branch to checkout'
-        });
-
-        if (!selectedBranch) return;
-
-        await git.checkout(selectedBranch);
-        vscode.window.showInformationMessage(`Switched to branch: ${selectedBranch}`);
-    } catch (error: any) {
-        vscode.window.showErrorMessage(`Failed to checkout branch: ${error.message}`);
-    }
-}
-
-async function gitLogAll() {
-    try {
-        const log = await git.log({ maxCount: 20 });
-        const output = log.all.map(commit =>
-            `Commit: ${commit.hash}\nAuthor: ${commit.author_name}\nDate: ${commit.date}\n\n${commit.message}\n${'='.repeat(50)}`
-        ).join('\n\n');
-
-        const doc = await vscode.workspace.openTextDocument({ content: output, language: 'plaintext' });
-        await vscode.window.showTextDocument(doc);
-    } catch (error: any) {
-        vscode.window.showErrorMessage(`Failed to get git log: ${error.message}`);
     }
 }
 
