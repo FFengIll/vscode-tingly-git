@@ -120,10 +120,13 @@ async function gitAddFile(resource?: vscode.Uri) {
     }
 
     try {
-        // Check if file is ignored by .gitignore
-        await checkGitIgnore(filePath);
+        // Check if file is ignored by .gitignore (returns true if force added)
+        const wasForceAdded = await checkGitIgnore(filePath);
 
-        await git.add(filePath);
+        // Only add if not already force-added
+        if (!wasForceAdded) {
+            await git.add(filePath);
+        }
         const fileName = filePath.split('/').pop() || filePath;
         const fileType = (await vscode.workspace.fs.stat(vscode.Uri.file(filePath))).type === vscode.FileType.Directory ? 'directory' : 'file';
         vscode.window.showInformationMessage(`Added ${fileType}: ${fileName}`);
@@ -164,7 +167,7 @@ async function gitLogCurrentFile() {
     }
 }
 
-async function checkGitIgnore(filePath: string): Promise<void> {
+async function checkGitIgnore(filePath: string): Promise<boolean> {
     try {
         // Check if file is ignored
         const isIgnored = await git.raw(['check-ignore', filePath]);
@@ -180,6 +183,7 @@ async function checkGitIgnore(filePath: string): Promise<void> {
             if (action === 'Force Add') {
                 await git.raw(['add', '-f', filePath]);
                 vscode.window.showInformationMessage(`Force added: ${fileName}`);
+                return true; // File was force added
             }
 
             throw new Error('File is ignored by .gitignore');
@@ -188,10 +192,11 @@ async function checkGitIgnore(filePath: string): Promise<void> {
         if (!error.message.includes('ignored by .gitignore')) {
             // check-ignore returns exit code 1 when file is not ignored
             // This is expected behavior, so we ignore this error
-            return;
+            return false;
         }
         throw error;
     }
+    return false;
 }
 
 async function gitignore() {
