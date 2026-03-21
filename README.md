@@ -1,33 +1,36 @@
 # Tingly Git
 
-A VS Code extension that provides essential Git utilities with context menu support, smart .gitignore management, and commit message autocompletion.
+A VS Code extension that adds **convenient Git utilities** on top of VSCode's built-in Source Control.
 
-> **Focus**: This extension provides unique Git features that complement VSCode's built-in Source Control functionality, rather than duplicating it.
+> **Philosophy**: We extend VSCode's native Git with unique convenience features. No duplication, just smart enhancements to your daily Git workflow.
 
 ![](resource/preview.scm.png)
 ![](resource/preview.png)
 
-## Features
+## Why Tingly Git?
 
-- **Smart Gitignore Management**: Complete .gitignore management with 180+ professional templates from Toptal
-- **Commit Message Autocomplete**: Smart file path completion in SCM commit input box
-- **File History Log**: Quick access to git log for specific files
-- **Context Menu Support**: Right-click files and folders for quick Git operations
-- **Smart Validation**: Detects ignored files with option to force add
-- **Remote Management**: Add named remotes easily
+VSCode's Source Control panel is excellent for Git basics. Tingly Git adds the **missing convenience features** that streamline your workflow:
+
+| Feature | Why It Matters |
+|---------|----------------|
+| **Smart Gitignore Templates** | Browse & insert 50+ curated templates from GitHub's official collection - faster than manual copy-paste |
+| **File History Log** | Quick access to git log for any file - no terminal needed |
+| **Commit Message Autocomplete** | See staged files while typing commit messages - write better messages |
+| **Context Menu Staging** | Right-click to add files - faster than opening Source Control panel |
+
+These are features **VSCode doesn't provide natively** - designed to save you time every day.
 
 ### Commands
 
-Access via Command Palette (Ctrl+Shift+P):
+Access via Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`):
 
-| Command Palette Entry          | Description                           | Unique Feature |
-| ------------------------------ | ------------------------------------- | -------------- |
-| Tingly Git: Add File/Directory | Stage files from context menu         | Quick access   |
-| Tingly Git: Add Remote         | Add named remotes to your repository  | Convenience    |
-| Tingly Git: Log Current File   | View commit history for current file  | **Unique**     |
-| Tingly Git: Manage .gitignore  | Browse and add professional templates | **Unique**     |
+| Command | What It Does |
+|---------|--------------|
+| `Tingly Git: Manage .gitignore` | Browse and insert templates from GitHub's official collection |
+| `Tingly Git: Log Current File` | Show commit history for the active file |
+| `Tingly Git: Add Remote` | Add a named remote to your repository |
 
-> **Note**: Basic Git operations (init, commit, push, pull, branch, status) are handled natively by VSCode's Source Control panel.
+**Also available via context menu** - Right-click files/folders for "Git: Add File/Directory" and "Git: Log Current File".
 
 ### Context Menu
 
@@ -37,29 +40,26 @@ Right-click on:
 
 ### Gitignore Templates
 
-Access 180+ professional gitignore templates covering:
-- Programming languages (Python, JavaScript, Java, etc.)
-- Frameworks (React, Vue, Django, etc.)
-- Tools & IDEs (VS Code, IntelliJ, Docker, etc.)
-- Build systems (npm, Maven, Gradle, etc.)
-- Operating systems (Windows, macOS, Linux)
+We fetch templates directly from **[github/gitignore](https://github.com/github/gitignore)** - the official, community-maintained collection.
+
+Covering 50+ popular technologies:
+- **Languages**: Node, Python, Go, Rust, Java, TypeScript, C++, C
+- **Frameworks**: React, Vue, Angular, Next.js, Django, Laravel, Rails, NestJS
+- **Mobile**: Android, iOS/macOS, Flutter, React Native
+- **Tools**: VS Code, IntelliJ, Docker, Terraform, Kubernetes
+- **Build Tools**: Maven, Gradle, Cargo, Composer, SBT
+
+Just select what you need - we fetch and merge it into your `.gitignore` automatically.
 
 ### Commit Message Autocomplete
 
-When writing commit messages in the SCM input box:
-- Press `Ctrl+Space` or `Cmd+I` to trigger suggestions
-- Shows all staged files for quick reference
-- Type to fuzzy-filter file paths (matches anywhere in the path)
-- Select a file to insert its path into the message
+When writing commit messages in VSCode's Source Control input:
+1. Press `Ctrl+Space` or `Cmd+I` to trigger suggestions
+2. See all staged files with their paths
+3. Type to fuzzy-filter (matches anywhere in the path)
+4. Select to insert the file path into your message
 
-## Why This Extension?
-
-VSCode already provides excellent Git support through the Source Control panel. This extension focuses on **unique features** that enhance your workflow:
-
-1. **Gitignore Templates** - No native equivalent, saves time setting up projects
-2. **File-Specific History** - Quick access to file log from context menu
-3. **Staged Files Autocomplete** - Write better commit messages faster
-4. **Context Menu Staging** - Faster than opening Source Control panel
+Perfect for writing clear, descriptive commit messages that reference specific files.
 
 ## Usage
 
