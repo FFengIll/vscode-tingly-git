@@ -11,12 +11,12 @@ A VS Code extension that adds **convenient Git utilities** on top of VSCode's bu
 
 VSCode's Source Control panel is excellent for Git basics. Tingly Git adds the **missing convenience features** that streamline your workflow:
 
-| Feature | Why It Matters |
-|---------|----------------|
-| **Smart Gitignore Templates** | Browse & insert 50+ curated templates from GitHub's official collection - faster than manual copy-paste |
-| **File History Log** | Quick access to git log for any file - no terminal needed |
-| **Commit Message Autocomplete** | See staged files while typing commit messages - write better messages |
-| **Context Menu Staging** | Right-click to add files - faster than opening Source Control panel |
+| Feature                         | Why It Matters                                                                                          |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| **Smart Gitignore Templates**   | Browse & insert 50+ curated templates from GitHub's official collection - faster than manual copy-paste |
+| **File History Log**            | Quick access to git log for any file - no terminal needed                                               |
+| **Commit Message Autocomplete** | See staged files while typing commit messages - write better messages                                   |
+| **Context Menu Staging**        | Right-click to add files - faster than opening Source Control panel                                     |
 
 These are features **VSCode doesn't provide natively** - designed to save you time every day.
 
@@ -24,11 +24,11 @@ These are features **VSCode doesn't provide natively** - designed to save you ti
 
 Access via Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`):
 
-| Command | What It Does |
-|---------|--------------|
+| Command                         | What It Does                                                  |
+| ------------------------------- | ------------------------------------------------------------- |
 | `Tingly Git: Manage .gitignore` | Browse and insert templates from GitHub's official collection |
-| `Tingly Git: Log Current File` | Show commit history for the active file |
-| `Tingly Git: Add Remote` | Add a named remote to your repository |
+| `Tingly Git: Log Current File`  | Show commit history for the active file                       |
+| `Tingly Git: Add Remote`        | Add a named remote to your repository                         |
 
 **Also available via context menu** - Right-click files/folders for "Git: Add File/Directory" and "Git: Log Current File".
 
@@ -75,11 +75,14 @@ Perfect for writing clear, descriptive commit messages that reference specific f
 
 ## Release Notes
 
-### 0.260228.1900
+### 0.260321.0
+- **New gitignore source**: Switched from Toptal to GitHub's official gitignore collection
+- **Curated templates**: 50+ popular technology templates directly from github/gitignore
 - **Refactor**: Removed commands that duplicate VSCode native functionality
-- **Focus**: Now focuses on unique features only
+- **Focus**: Now focuses on unique convenience features only
 - **Kept**: gitignore templates, file log, staged files autocomplete, context menu staging
 - **Removed**: init, commit, push, pull, status, branch operations (use VSCode native)
+- **Documentation**: Clarified positioning as a convenience layer on top of VSCode's built-in Git
 
 ### 0.260228.1800
 - **Commit Message Autocomplete**: Smart file path completion in SCM commit input
