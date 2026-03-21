@@ -18,14 +18,14 @@ A VS Code extension that provides essential Git utilities with context menu supp
 
 ### Commands
 
-Access via Command Palette (Ctrl+Shift+P) → "Git:":
+Access via Command Palette (Ctrl+Shift+P):
 
-| Command | Description | Unique Feature |
-|---------|-------------|----------------|
-| Git: Add File/Directory | Stage files from context menu | Quick access |
-| Git: Add Remote | Add named remotes to your repository | Convenience |
-| Git: Log Current File | View commit history for current file | **Unique** |
-| Git: Manage .gitignore | Browse and add professional templates | **Unique** |
+| Command Palette Entry          | Description                           | Unique Feature |
+| ------------------------------ | ------------------------------------- | -------------- |
+| Tingly Git: Add File/Directory | Stage files from context menu         | Quick access   |
+| Tingly Git: Add Remote         | Add named remotes to your repository  | Convenience    |
+| Tingly Git: Log Current File   | View commit history for current file  | **Unique**     |
+| Tingly Git: Manage .gitignore  | Browse and add professional templates | **Unique**     |
 
 > **Note**: Basic Git operations (init, commit, push, pull, branch, status) are handled natively by VSCode's Source Control panel.
 
@@ -66,7 +66,7 @@ VSCode already provides excellent Git support through the Source Control panel. 
 1. Install the extension from VSIX file
 2. Open Command Palette (Ctrl+Shift+P)
 3. Search for Tingly Git commands or use context menus
-4. For gitignore: Search "Git: Manage .gitignore" to browse and add templates
+4. For gitignore: Search "Tingly Git: Manage .gitignore" to browse and add templates
 
 ### Requirements
 

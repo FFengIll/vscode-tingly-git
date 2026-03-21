@@ -29,22 +29,22 @@
         "commands": [
             {
                 "command": "tingly-git.addFile",
-                "title": "Git: Add File/Directory",
+                "title": "Add File/Directory",
                 "category": "Tingly Git"
             },
             {
                 "command": "tingly-git.addRemote",
-                "title": "Git: Add Remote",
+                "title": "Add Remote",
                 "category": "Tingly Git"
             },
             {
                 "command": "tingly-git.logCurrentFile",
-                "title": "Git: Log Current File",
+                "title": "Log Current File",
                 "category": "Tingly Git"
             },
             {
                 "command": "tingly-git.gitignore",
-                "title": "Git: Manage .gitignore",
+                "title": "Manage .gitignore",
                 "category": "Tingly Git"
             }
         ],
