@@ -5,7 +5,6 @@ A VS Code extension that adds **convenient Git utilities** on top of VSCode's bu
 > **Philosophy**: We extend VSCode's native Git with unique convenience features. No duplication, just smart enhancements to your daily Git workflow.
 
 ![](resource/preview.scm.png)
-![](resource/preview.png)
 
 ## Why Tingly Git?
 
