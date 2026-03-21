@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import simpleGit, { SimpleGit } from 'simple-git';
-import { toptalTemplates } from './toptal_ist';
+import { githubTemplates, GITHUB_GITIGNORE_BASE_URL, GitignoreTemplate } from './githubTemplates';
 import { StagedFilesCompletionProvider } from './completionProvider';
 let git: SimpleGit;
 
@@ -261,58 +261,95 @@ async function gitignore() {
 
 async function addGitignoreTemplate(gitignorePath: string) {
     try {
-        // Available gitignore templates from toptal API
-        const availableTemplates = toptalTemplates;
+        type QuickPickItem = vscode.QuickPickItem & { template?: GitignoreTemplate };
 
-        const selectedTemplates = await vscode.window.showQuickPick(availableTemplates, {
-            placeHolder: 'Search and select gitignore template(s)',
+        // Show quick-pick with common gitignore templates from GitHub
+        const quickPickItems: QuickPickItem[] = githubTemplates.map(t => ({
+            label: t.name,
+            description: `https://github.com/github/gitignore/blob/main/${t.filename}`,
+            template: t
+        }));
+
+        // Add option to browse all templates on GitHub
+        quickPickItems.push({
+            label: 'Browse all templates on GitHub...',
+            description: 'Open github/gitignore repository in browser'
+        });
+
+        const selected = await vscode.window.showQuickPick(quickPickItems, {
+            placeHolder: 'Select a gitignore template from GitHub\'s collection',
             canPickMany: true
         });
 
-        if (!selectedTemplates || selectedTemplates.length === 0) {
+        if (!selected || selected.length === 0) {
             return;
         }
 
-        // Fetch templates from toptal API
-        const templatesToFetch = selectedTemplates.join(',');
-        const templateUrl = `https://www.toptal.com/developers/gitignore/api/${templatesToFetch}`;
-
-        vscode.window.showInformationMessage('Fetching gitignore template(s)...', 'Downloading...');
-
-        const response = await fetch(templateUrl);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        // Check if user selected the browse option
+        const browseItem = selected.find(s => !s.template);
+        if (browseItem) {
+            vscode.env.openExternal(vscode.Uri.parse('https://github.com/github/gitignore'));
+            // If only browse was selected, return
+            if (selected.length === 1) {
+                return;
+            }
         }
 
-        const templateContent = await response.text();
+        // Filter out the browse item and get selected templates
+        const selectedTemplates = selected
+            .filter(s => s.template)
+            .map(s => s.template!);
 
-        // Read existing gitignore content
-        let existingContent = '';
-        try {
-            const existingData = await vscode.workspace.fs.readFile(vscode.Uri.file(gitignorePath));
-            existingContent = new TextDecoder().decode(existingData);
-        } catch {
-            // File doesn't exist or can't be read
+        if (selectedTemplates.length === 0) {
+            return;
         }
 
-        // Combine existing content with new template
-        let newContent = existingContent.trim();
-        if (newContent && !newContent.endsWith('\n')) {
-            newContent += '\n';
-        }
-        newContent += '\n# Added by Tingly Git extension - ' + new Date().toISOString().split('T')[0] + '\n';
-        newContent += `# Templates: ${selectedTemplates.join(', ')}\n`;
-        newContent += templateContent;
+        vscode.window.withProgress({
+            location: vscode.ProgressLocation.Notification,
+            title: `Fetching ${selectedTemplates.length} gitignore template(s) from GitHub...`,
+            cancellable: false
+        }, async () => {
+            let combinedContent = '';
 
-        // Write the updated content
-        await vscode.workspace.fs.writeFile(
-            vscode.Uri.file(gitignorePath),
-            new TextEncoder().encode(newContent)
-        );
+            for (const tmpl of selectedTemplates) {
+                const templateUrl = `${GITHUB_GITIGNORE_BASE_URL}/${tmpl.filename}`;
+                const response = await fetch(templateUrl);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch ${tmpl.name}: HTTP ${response.status}`);
+                }
+                const content = await response.text();
+                combinedContent += `\n# From GitHub/gitignore: ${tmpl.filename}\n`;
+                combinedContent += content + '\n';
+            }
 
-        vscode.window.showInformationMessage(
-            `Successfully added ${selectedTemplates.length} gitignore template(s) to .gitignore`
-        );
+            // Read existing gitignore content
+            let existingContent = '';
+            try {
+                const existingData = await vscode.workspace.fs.readFile(vscode.Uri.file(gitignorePath));
+                existingContent = new TextDecoder().decode(existingData);
+            } catch {
+                // File doesn't exist or can't be read
+            }
+
+            // Combine existing content with new templates
+            let newContent = existingContent.trim();
+            if (newContent && !newContent.endsWith('\n')) {
+                newContent += '\n';
+            }
+            newContent += '\n# Added by Tingly Git extension - ' + new Date().toISOString().split('T')[0] + '\n';
+            newContent += `# Source: https://github.com/github/gitignore\n`;
+            newContent += combinedContent;
+
+            // Write the updated content
+            await vscode.workspace.fs.writeFile(
+                vscode.Uri.file(gitignorePath),
+                new TextEncoder().encode(newContent)
+            );
+
+            vscode.window.showInformationMessage(
+                `Successfully added ${selectedTemplates.length} gitignore template(s) from GitHub`
+            );
+        });
 
     } catch (error: any) {
         vscode.window.showErrorMessage(`Failed to add gitignore template: ${error.message}`);
