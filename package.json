@@ -2,7 +2,7 @@
     "name": "tingly-git",
     "displayName": "Tingly Git",
     "description": "Easy Git commands with context menu support and gitignore validation",
-    "version": "0.260321.0",
+    "version": "0.260401.0",
     "author": {
         "name": "Tingly"
     },
@@ -22,7 +22,8 @@
         "onCommand:tingly-git.addRemote",
         "onCommand:tingly-git.addFile",
         "onCommand:tingly-git.logCurrentFile",
-        "onCommand:tingly-git.gitignore"
+        "onCommand:tingly-git.gitignore",
+        "onCommand:tingly-git.license"
     ],
     "main": "./out/extension.js",
     "contributes": {
@@ -45,6 +46,11 @@
             {
                 "command": "tingly-git.gitignore",
                 "title": "Manage .gitignore",
+                "category": "Tingly Git"
+            },
+            {
+                "command": "tingly-git.license",
+                "title": "Manage LICENSE",
                 "category": "Tingly Git"
             }
         ],
