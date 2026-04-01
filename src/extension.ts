@@ -4,9 +4,11 @@ import { githubTemplates, GITHUB_GITIGNORE_BASE_URL, GitignoreTemplate } from '.
 import { licenseTemplates, LICENSE_TEMPLATES_BASE_URL, LicenseTemplate } from './licenseTemplates';
 import { StagedFilesCompletionProvider } from './completionProvider';
 let git: SimpleGit;
+let extensionUri: vscode.Uri;
 
 export function activate(context: vscode.ExtensionContext) {
     console.log('Tingly Git extension is now active!');
+    extensionUri = context.extensionUri;
 
     // Initialize git for the workspace folder
     const workspaceFolders = vscode.workspace.workspaceFolders;
@@ -442,11 +444,29 @@ async function license() {
             title: `Fetching ${tmpl.name} license template...`,
             cancellable: false
         }, async () => {
-            const response = await fetch(templateUrl);
-            if (!response.ok) {
-                throw new Error(`Failed to fetch ${tmpl.name}: HTTP ${response.status}`);
+            let content = '';
+
+            // Try remote fetch first
+            try {
+                const response = await fetch(templateUrl);
+                if (response.ok) {
+                    content = await response.text();
+                }
+            } catch {
+                // Network unavailable
             }
-            let content = await response.text();
+
+            // Fallback to bundled template if remote failed
+            if (!content) {
+                const localPath = vscode.Uri.joinPath(extensionUri, 'resource', 'license-templates', 'templates', tmpl.filename);
+                try {
+                    const data = await vscode.workspace.fs.readFile(localPath);
+                    content = new TextDecoder().decode(data);
+                    vscode.window.showInformationMessage(`Using bundled ${tmpl.name} template (network unavailable)`);
+                } catch {
+                    throw new Error(`Failed to fetch ${tmpl.name} template from both remote and local bundle`);
+                }
+            }
 
             // Check if template has placeholders that need user input
             const hasYear = content.includes('{{ year }}');
