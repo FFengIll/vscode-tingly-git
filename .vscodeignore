@@ -12,3 +12,4 @@ vsc-extension-quickstart.md
 
 .sdlc
 resource/license-templates/.git
+resource/download-gitignore-templates.sh
