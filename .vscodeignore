@@ -11,3 +11,4 @@ vsc-extension-quickstart.md
 **/.vscode-test.*
 
 .sdlc
+resource/license-templates/.git
