@@ -13,6 +13,7 @@ VSCode's Source Control panel is excellent for Git basics. Tingly Git adds the *
 | Feature                         | Why It Matters                                                                                          |
 | ------------------------------- | ------------------------------------------------------------------------------------------------------- |
 | **Smart Gitignore Templates**   | Browse & insert 50+ curated templates from GitHub's official collection - faster than manual copy-paste |
+| **License Management**          | Browse & insert license templates from the official collection - set up your project license in seconds |
 | **File History Log**            | Quick access to git log for any file - no terminal needed                                               |
 | **Commit Message Autocomplete** | See staged files while typing commit messages - write better messages                                   |
 | **Context Menu Staging**        | Right-click to add files - faster than opening Source Control panel                                     |
@@ -26,6 +27,7 @@ Access via Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`):
 | Command                         | What It Does                                                  |
 | ------------------------------- | ------------------------------------------------------------- |
 | `Tingly Git: Manage .gitignore` | Browse and insert templates from GitHub's official collection |
+| `Tingly Git: Manage LICENSE`   | Browse and insert license templates from the official collection |
 | `Tingly Git: Log Current File`  | Show commit history for the active file                       |
 | `Tingly Git: Add Remote`        | Add a named remote to your repository                         |
 
