@@ -74,30 +74,7 @@ Perfect for writing clear, descriptive commit messages that reference specific f
 
 ## Release Notes
 
-### 0.260321.0
-- **New gitignore source**: Switched from Toptal to GitHub's official gitignore collection
-- **Curated templates**: 50+ popular technology templates directly from github/gitignore
-- **Refactor**: Removed commands that duplicate VSCode native functionality
-- **Focus**: Now focuses on unique convenience features only
-- **Kept**: gitignore templates, file log, staged files autocomplete, context menu staging
-- **Removed**: init, commit, push, pull, status, branch operations (use VSCode native)
-- **Documentation**: Clarified positioning as a convenience layer on top of VSCode's built-in Git
-
-### 0.260228.1800
-- **Commit Message Autocomplete**: Smart file path completion in SCM commit input
-  - Press `Ctrl+Space` or `Cmd+I` to call `Trigger Suggestion` to list staged files
-  - Fuzzy filtering - type anywhere to filter paths
-  - Quick file path insertion for better commit messages
-
-### 0.25.121015
-- **Major Feature**: Comprehensive .gitignore management system
-  - Added 180+ professional gitignore templates from Toptal's collection
-  - Automatic .gitignore creation when missing
-  - Smart template merging with timestamp and source tracking
-  - Enhanced user experience for template browsing and selection
-
-### 0.0.1
-- Initial release
+See [CHANGELOG.md](CHANGELOG.md) for a full history of changes.
 
 ## Support
 
