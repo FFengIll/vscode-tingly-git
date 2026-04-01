@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import simpleGit, { SimpleGit } from 'simple-git';
 import { githubTemplates, GITHUB_GITIGNORE_BASE_URL, GitignoreTemplate } from './githubTemplates';
+import { licenseTemplates, LICENSE_TEMPLATES_BASE_URL, LicenseTemplate } from './licenseTemplates';
 import { StagedFilesCompletionProvider } from './completionProvider';
 let git: SimpleGit;
 
@@ -30,7 +31,8 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('tingly-git.addFile', (resource) => gitAddFile(resource)),
         vscode.commands.registerCommand('tingly-git.addRemote', gitAddRemote),
         vscode.commands.registerCommand('tingly-git.logCurrentFile', () => gitLogCurrentFile()),
-        vscode.commands.registerCommand('tingly-git.gitignore', gitignore)
+        vscode.commands.registerCommand('tingly-git.gitignore', gitignore),
+        vscode.commands.registerCommand('tingly-git.license', license)
     ];
 
     commands.forEach(command => context.subscriptions.push(command));
@@ -367,6 +369,155 @@ async function viewGitignore(gitignorePath: string) {
         await vscode.commands.executeCommand('vscode.open', gitignoreUri);
     } catch (error: any) {
         vscode.window.showErrorMessage(`Failed to open .gitignore: ${error.message}`);
+    }
+}
+
+async function license() {
+    try {
+        const workspaceFolders = vscode.workspace.workspaceFolders;
+        if (!workspaceFolders || workspaceFolders.length === 0) {
+            vscode.window.showErrorMessage('No workspace folder found');
+            return;
+        }
+
+        const workspaceRoot = workspaceFolders[0].uri.fsPath;
+        const licensePath = `${workspaceRoot}/LICENSE`;
+
+        // Check if LICENSE already exists
+        try {
+            await vscode.workspace.fs.stat(vscode.Uri.file(licensePath));
+            // File exists - ask what to do
+            const action = await vscode.window.showWarningMessage(
+                'LICENSE file already exists. What would you like to do?',
+                'Overwrite',
+                'View',
+                'Cancel'
+            );
+
+            if (action === 'View') {
+                await vscode.commands.executeCommand('vscode.open', vscode.Uri.file(licensePath));
+                return;
+            }
+
+            if (action !== 'Overwrite') {
+                return;
+            }
+        } catch {
+            // File doesn't exist - proceed to template selection
+        }
+
+        type QuickPickItem = vscode.QuickPickItem & { template?: LicenseTemplate };
+
+        const quickPickItems: QuickPickItem[] = licenseTemplates.map(t => ({
+            label: t.name,
+            description: t.filename,
+            template: t
+        }));
+
+        // Add option to browse all templates on GitHub
+        quickPickItems.push({
+            label: 'Browse all templates on GitHub...',
+            description: 'Open license-templates repository in browser'
+        });
+
+        const selected = await vscode.window.showQuickPick(quickPickItems, {
+            placeHolder: 'Select a license template'
+        });
+
+        if (!selected) {
+            return;
+        }
+
+        // Check if user selected the browse option
+        if (!selected.template) {
+            vscode.env.openExternal(vscode.Uri.parse('https://github.com/licenses/license-templates/tree/master/templates'));
+            return;
+        }
+
+        const tmpl = selected.template;
+        const templateUrl = `${LICENSE_TEMPLATES_BASE_URL}/${tmpl.filename}`;
+
+        await vscode.window.withProgress({
+            location: vscode.ProgressLocation.Notification,
+            title: `Fetching ${tmpl.name} license template...`,
+            cancellable: false
+        }, async () => {
+            const response = await fetch(templateUrl);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch ${tmpl.name}: HTTP ${response.status}`);
+            }
+            let content = await response.text();
+
+            // Check if template has placeholders that need user input
+            const hasYear = content.includes('{{ year }}');
+            const hasOrganization = content.includes('{{ organization }}');
+            const hasProject = content.includes('{{ project }}');
+
+            if (hasYear || hasOrganization || hasProject) {
+                const currentYear = new Date().getFullYear().toString();
+                let year = currentYear;
+                let organization = '';
+                let project = workspaceFolders[0].name;
+
+                if (hasYear) {
+                    const yearInput = await vscode.window.showInputBox({
+                        prompt: 'Enter copyright year',
+                        value: currentYear,
+                        placeHolder: currentYear
+                    });
+                    if (yearInput === undefined) {
+                        return; // User cancelled
+                    }
+                    year = yearInput || currentYear;
+                }
+
+                if (hasOrganization) {
+                    const orgInput = await vscode.window.showInputBox({
+                        prompt: 'Enter copyright holder (name or organization)',
+                        placeHolder: 'Your Name or Organization'
+                    });
+                    if (orgInput === undefined) {
+                        return; // User cancelled
+                    }
+                    organization = orgInput;
+                }
+
+                if (hasProject) {
+                    const projectInput = await vscode.window.showInputBox({
+                        prompt: 'Enter project name',
+                        value: project,
+                        placeHolder: project
+                    });
+                    if (projectInput === undefined) {
+                        return; // User cancelled
+                    }
+                    project = projectInput;
+                }
+
+                content = content
+                    .replace(/\{\{ year \}\}/g, year)
+                    .replace(/\{\{ organization \}\}/g, organization)
+                    .replace(/\{\{ project \}\}/g, project);
+            }
+
+            // Write the LICENSE file
+            await vscode.workspace.fs.writeFile(
+                vscode.Uri.file(licensePath),
+                new TextEncoder().encode(content)
+            );
+
+            vscode.window.showInformationMessage(`LICENSE file created with ${tmpl.name} license`, 'Add to Git').then(action => {
+                if (action === 'Add to Git') {
+                    git.add(licensePath).then(
+                        () => vscode.window.showInformationMessage('LICENSE added to Git'),
+                        () => { /* silently skip on failure */ }
+                    );
+                }
+            });
+        });
+
+    } catch (error: any) {
+        vscode.window.showErrorMessage(`Failed to create LICENSE: ${error.message}`);
     }
 }
 
