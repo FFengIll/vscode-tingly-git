@@ -1,6 +1,6 @@
 # Tingly Git
 
-A VS Code extension that adds **convenient Git utilities** on top of VSCode's built-in Source Control.
+A VS Code extension that lets you **git add files/folders via right-click**, view **file history logs**, and manage **.gitignore and LICENSE** — all without leaving the editor.
 
 > **Philosophy**: We extend VSCode's native Git with unique convenience features. No duplication, just smart enhancements to your daily Git workflow.
 

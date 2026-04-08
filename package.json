@@ -1,8 +1,8 @@
 {
     "name": "tingly-git",
     "displayName": "Tingly Git",
-    "description": "Easy Git commands with context menu support and gitignore validation",
-    "version": "0.260401.0",
+    "description": "Git add files/folders via right-click context menu, view file history logs, and manage .gitignore and LICENSE — all without leaving the editor",
+    "version": "0.260408.0",
     "author": {
         "name": "Tingly"
     },
