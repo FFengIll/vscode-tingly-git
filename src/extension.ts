@@ -173,34 +173,33 @@ async function gitLogCurrentFile() {
 
 async function checkGitIgnore(filePath: string): Promise<boolean> {
     try {
-        // Check if file is ignored
-        const isIgnored = await git.raw(['check-ignore', filePath]);
-
-        if (isIgnored) {
-            const fileName = filePath.split('/').pop() || filePath;
-            const action = await vscode.window.showWarningMessage(
-                `File "${fileName}" is ignored by .gitignore. Do you want to force add it?`,
-                'Force Add',
-                'Cancel'
-            );
-
-            if (action === 'Force Add') {
-                await git.raw(['add', '-f', filePath]);
-                vscode.window.showInformationMessage(`Force added: ${fileName}`);
-                return true; // File was force added
-            }
-
-            throw new Error('File is ignored by .gitignore');
+        // check-ignore exits 0 if ignored (output = path), exits 1 if not ignored (throws)
+        const result = await git.raw(['check-ignore', filePath]);
+        if (!result.trim()) {
+            return false; // not ignored
         }
+
+        const fileName = filePath.split('/').pop() || filePath;
+        const action = await vscode.window.showWarningMessage(
+            `File "${fileName}" is ignored by .gitignore. Force add it?`,
+            'Force Add',
+            'Cancel'
+        );
+
+        if (action === 'Force Add') {
+            await git.raw(['add', '-f', '--', filePath]);
+            vscode.window.showInformationMessage(`Force added: ${fileName}`);
+            return true;
+        }
+
+        throw new Error('File is ignored by .gitignore');
     } catch (error: any) {
-        if (!error.message.includes('ignored by .gitignore')) {
-            // check-ignore returns exit code 1 when file is not ignored
-            // This is expected behavior, so we ignore this error
-            return false;
+        // git check-ignore exits 1 when file is NOT ignored — not a real error
+        if (error.message?.includes('ignored by .gitignore')) {
+            throw error;
         }
-        throw error;
+        return false;
     }
-    return false;
 }
 
 async function gitignore() {
@@ -219,13 +218,12 @@ async function gitignore() {
             await vscode.workspace.fs.stat(vscode.Uri.file(gitignorePath));
         } catch {
             // File doesn't exist
-            const createAction = await vscode.window.showInformationMessage(
-                '.gitignore file not found. Create one?',
-                'Create',
-                'Cancel'
+            const createAction = await vscode.window.showQuickPick(
+                ['Create .gitignore', 'Cancel'],
+                { placeHolder: '.gitignore not found — create one?' }
             );
 
-            if (createAction !== 'Create') {
+            if (createAction !== 'Create .gitignore') {
                 return;
             }
 
@@ -234,7 +232,6 @@ async function gitignore() {
                     vscode.Uri.file(gitignorePath),
                     new TextEncoder().encode('# Git ignore file\n')
                 );
-                vscode.window.showInformationMessage('.gitignore file created successfully!');
             } catch (error: any) {
                 vscode.window.showErrorMessage(`Failed to create .gitignore: ${error.message}`);
                 return;
@@ -389,11 +386,9 @@ async function license() {
         try {
             await vscode.workspace.fs.stat(vscode.Uri.file(licensePath));
             // File exists - ask what to do
-            const action = await vscode.window.showWarningMessage(
-                'LICENSE file already exists. What would you like to do?',
-                'Overwrite',
-                'View',
-                'Cancel'
+            const action = await vscode.window.showQuickPick(
+                ['Overwrite', 'View', 'Cancel'],
+                { placeHolder: 'LICENSE file already exists — what would you like to do?' }
             );
 
             if (action === 'View') {
@@ -526,14 +521,16 @@ async function license() {
                 new TextEncoder().encode(content)
             );
 
-            vscode.window.showInformationMessage(`LICENSE file created with ${tmpl.name} license`, 'Add to Git').then(action => {
-                if (action === 'Add to Git') {
-                    git.add(licensePath).then(
-                        () => vscode.window.showInformationMessage('LICENSE added to Git'),
-                        () => { /* silently skip on failure */ }
-                    );
-                }
-            });
+            const followUp = await vscode.window.showQuickPick(
+                ['Add to Git', 'Done'],
+                { placeHolder: `LICENSE file created with ${tmpl.name} license` }
+            );
+            if (followUp === 'Add to Git') {
+                git.add(licensePath).then(
+                    () => { /* silently succeed */ },
+                    () => { /* silently skip on failure */ }
+                );
+            }
         });
 
     } catch (error: any) {
