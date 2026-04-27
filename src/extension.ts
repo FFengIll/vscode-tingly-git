@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import simpleGit, { SimpleGit } from 'simple-git';
 import { githubTemplates, GITHUB_GITIGNORE_BASE_URL, GitignoreTemplate } from './githubTemplates';
-import { licenseTemplates, LICENSE_TEMPLATES_BASE_URL, LicenseTemplate } from './licenseTemplates';
+import { licenseTemplates, LicenseTemplate } from './licenseTemplates';
 import { StagedFilesCompletionProvider } from './completionProvider';
 let git: SimpleGit;
 let extensionUri: vscode.Uri;
@@ -432,35 +432,21 @@ async function license() {
         }
 
         const tmpl = selected.template;
-        const templateUrl = `${LICENSE_TEMPLATES_BASE_URL}/${tmpl.filename}`;
 
         await vscode.window.withProgress({
             location: vscode.ProgressLocation.Notification,
-            title: `Fetching ${tmpl.name} license template...`,
+            title: `Loading ${tmpl.name} license template...`,
             cancellable: false
         }, async () => {
             let content = '';
 
-            // Try remote fetch first
+            // Load from bundled templates
+            const localPath = vscode.Uri.joinPath(extensionUri, 'resource', 'license-templates', 'templates', tmpl.filename);
             try {
-                const response = await fetch(templateUrl);
-                if (response.ok) {
-                    content = await response.text();
-                }
+                const data = await vscode.workspace.fs.readFile(localPath);
+                content = new TextDecoder().decode(data);
             } catch {
-                // Network unavailable
-            }
-
-            // Fallback to bundled template if remote failed
-            if (!content) {
-                const localPath = vscode.Uri.joinPath(extensionUri, 'resource', 'license-templates', 'templates', tmpl.filename);
-                try {
-                    const data = await vscode.workspace.fs.readFile(localPath);
-                    content = new TextDecoder().decode(data);
-                    vscode.window.showInformationMessage(`Using bundled ${tmpl.name} template (network unavailable)`);
-                } catch {
-                    throw new Error(`Failed to fetch ${tmpl.name} template from both remote and local bundle`);
-                }
+                throw new Error(`Failed to load bundled ${tmpl.name} template`);
             }
 
             // Check if template has placeholders that need user input

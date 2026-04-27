@@ -30,6 +30,3 @@ export const licenseTemplates: LicenseTemplate[] = [
     { name: "X11", filename: "x11.txt" },
     { name: "zlib", filename: "zlib.txt" },
 ];
-
-// Base URL for GitHub raw content
-export const LICENSE_TEMPLATES_BASE_URL = "https://raw.githubusercontent.com/licenses/license-templates/master/templates";
