@@ -11,6 +11,7 @@ vsc-extension-quickstart.md
 **/.vscode-test.*
 
 .sdlc
+.idea
 resource/license-templates/.git
 resource/gitignore-templates/.git
 resource/download-gitignore-templates.sh
