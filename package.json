@@ -2,7 +2,7 @@
     "name": "tingly-git",
     "displayName": "Tingly Git",
     "description": "Git add files/folders via right-click context menu, view file history logs, and manage .gitignore and LICENSE — all without leaving the editor",
-    "version": "0.260415.0",
+    "version": "0.260428.0",
     "author": {
         "name": "Tingly"
     },
