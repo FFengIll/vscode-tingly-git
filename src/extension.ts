@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import simpleGit, { SimpleGit } from 'simple-git';
-import { githubTemplates, GITHUB_GITIGNORE_BASE_URL, GitignoreTemplate } from './githubTemplates';
+import { loadGitignoreTemplates, GitignoreTemplate } from './githubTemplates';
 import { licenseTemplates, LicenseTemplate } from './licenseTemplates';
 import { StagedFilesCompletionProvider } from './completionProvider';
 let git: SimpleGit;
@@ -269,10 +269,12 @@ async function addGitignoreTemplate(gitignorePath: string) {
     try {
         type QuickPickItem = vscode.QuickPickItem & { template?: GitignoreTemplate };
 
-        // Show quick-pick with common gitignore templates from GitHub
+        const githubTemplates = await loadGitignoreTemplates(extensionUri);
+
+        // Show quick-pick with bundled gitignore templates
         const quickPickItems: QuickPickItem[] = githubTemplates.map(t => ({
             label: t.name,
-            description: `https://github.com/github/gitignore/blob/main/${t.filename}`,
+            description: t.filename,
             template: t
         }));
 
@@ -312,18 +314,15 @@ async function addGitignoreTemplate(gitignorePath: string) {
 
         vscode.window.withProgress({
             location: vscode.ProgressLocation.Notification,
-            title: `Fetching ${selectedTemplates.length} gitignore template(s) from GitHub...`,
+            title: `Loading ${selectedTemplates.length} gitignore template(s)...`,
             cancellable: false
         }, async () => {
             let combinedContent = '';
 
             for (const tmpl of selectedTemplates) {
-                const templateUrl = `${GITHUB_GITIGNORE_BASE_URL}/${tmpl.filename}`;
-                const response = await fetch(templateUrl);
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch ${tmpl.name}: HTTP ${response.status}`);
-                }
-                const content = await response.text();
+                const localPath = vscode.Uri.joinPath(extensionUri, 'resource', 'gitignore-templates', tmpl.filename);
+                const data = await vscode.workspace.fs.readFile(localPath);
+                const content = new TextDecoder().decode(data);
                 combinedContent += `\n# From GitHub/gitignore: ${tmpl.filename}\n`;
                 combinedContent += content + '\n';
             }
@@ -353,7 +352,7 @@ async function addGitignoreTemplate(gitignorePath: string) {
             );
 
             vscode.window.showInformationMessage(
-                `Successfully added ${selectedTemplates.length} gitignore template(s) from GitHub`
+                `Successfully added ${selectedTemplates.length} gitignore template(s)`
             );
         });
 
