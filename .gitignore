@@ -3,6 +3,7 @@ dist
 node_modules
 .vscode-test/
 *.vsix
+.idea
 
 # Added by Tingly Git extension - 2025-12-10
 # Templates: python
