@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { resolveRepositoryForUri } from './gitApi';
-import { encodeLfsDiffUri } from './lfsDiffContentProvider';
+import { decodeLfsDiffUri, encodeLfsDiffUri, lfsDiffScheme } from './lfsDiffContentProvider';
 
 const revision = 'HEAD';
 
@@ -18,6 +18,15 @@ export function getRepositoryRelativePath(repositoryRoot: string, filePath: stri
     return relativePath.split(path.sep).join('/');
 }
 
+function getActiveDiffResource(): vscode.Uri | undefined {
+    const input = vscode.window.tabGroups.activeTabGroup.activeTab?.input;
+    if (input instanceof vscode.TabInputTextDiff) {
+        return input.modified;
+    }
+
+    return undefined;
+}
+
 function getSelectedResource(resource?: vscode.Uri | ResourceState): vscode.Uri | undefined {
     if (resource instanceof vscode.Uri) {
         return resource;
@@ -27,18 +36,46 @@ function getSelectedResource(resource?: vscode.Uri | ResourceState): vscode.Uri 
         return resource.resourceUri;
     }
 
-    return vscode.window.activeTextEditor?.document.uri;
+    return getActiveDiffResource() ?? vscode.window.activeTextEditor?.document.uri;
+}
+
+export function getWorkingTreeUri(uri: vscode.Uri): vscode.Uri {
+    if (uri.scheme === 'file') {
+        return uri;
+    }
+
+    if (uri.scheme === lfsDiffScheme) {
+        const document = decodeLfsDiffUri(uri);
+        return vscode.Uri.file(path.join(document.repositoryRoot, ...document.relativePath.split('/')));
+    }
+
+    if (uri.scheme === 'git') {
+        try {
+            const query = JSON.parse(uri.query) as { path?: unknown };
+            if (typeof query.path === 'string' && query.path.length > 0) {
+                return vscode.Uri.file(query.path);
+            }
+        } catch {
+            // Fall through to the local-files-only error.
+        }
+    }
+
+    throw new Error('Open LFS Diff currently supports local Git files only');
 }
 
 export async function openLfsDiff(resource?: vscode.Uri | ResourceState): Promise<void> {
-    const fileUri = getSelectedResource(resource);
-    if (!fileUri) {
+    const selectedUri = getSelectedResource(resource);
+    if (!selectedUri) {
         vscode.window.showWarningMessage('No file selected. Select a Source Control resource or open a file in the editor.');
         return;
     }
 
-    if (fileUri.scheme !== 'file') {
-        vscode.window.showErrorMessage('Open LFS Diff currently supports local files only.');
+    let fileUri: vscode.Uri;
+    try {
+        fileUri = getWorkingTreeUri(selectedUri);
+    } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        vscode.window.showErrorMessage(message);
         return;
     }
 

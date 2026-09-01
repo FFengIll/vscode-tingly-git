@@ -5,7 +5,7 @@ import * as path from 'path';
 import { execFile } from 'child_process';
 import { promisify } from 'util';
 import * as vscode from 'vscode';
-import { getRepositoryRelativePath } from '../lfsDiffCommand';
+import { getRepositoryRelativePath, getWorkingTreeUri } from '../lfsDiffCommand';
 import { decodeLfsDiffUri, encodeLfsDiffUri } from '../lfsDiffContentProvider';
 import { materializeGitContent } from '../gitContent';
 
@@ -28,6 +28,30 @@ suite('Extension Test Suite', () => {
     test('LFS diff URI rejects malformed payloads', () => {
         const uri = vscode.Uri.from({ scheme: 'lfs-diff', path: '/file.txt', query: '%7Bbad' });
         assert.throws(() => decodeLfsDiffUri(uri), /Invalid LFS diff URI/);
+    });
+
+    test('recovers the working-tree file from an open Git diff', () => {
+        const filePath = path.join(os.tmpdir(), 'repository', 'file name.jsonl');
+        const gitUri = vscode.Uri.file(filePath).with({
+            scheme: 'git',
+            query: JSON.stringify({ path: filePath, ref: 'HEAD' })
+        });
+
+        assert.strictEqual(getWorkingTreeUri(gitUri).fsPath, filePath);
+    });
+
+    test('recovers the working-tree file from an existing LFS diff', () => {
+        const repositoryRoot = path.join(os.tmpdir(), 'repository');
+        const uri = encodeLfsDiffUri({
+            repositoryRoot,
+            revision: 'HEAD',
+            relativePath: 'dir/file.jsonl'
+        });
+
+        assert.strictEqual(
+            getWorkingTreeUri(uri).fsPath,
+            path.join(repositoryRoot, 'dir', 'file.jsonl')
+        );
     });
 
     test('repository-relative paths use Git separators and reject escapes', () => {
