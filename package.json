@@ -17,6 +17,9 @@
         "Other"
     ],
     "icon": "resource/gear-stick-pattern.png",
+    "extensionDependencies": [
+        "vscode.git"
+    ],
     "activationEvents": [
         "workspaceContains:.git",
         "onCommand:tingly-git.addRemote",

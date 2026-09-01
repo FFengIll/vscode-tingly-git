@@ -19,8 +19,10 @@ export function activate(context: vscode.ExtensionContext) {
         return;
     }
 
-    // Register staged files completion provider for SCM input
-    const completionProvider = new StagedFilesCompletionProvider(git);
+    // Register staged files completion provider for SCM input.
+    // Resolves the repository per-document, so it supports multi-root
+    // workspaces and nested git repositories out of the box.
+    const completionProvider = new StagedFilesCompletionProvider();
     const completionDisposable = vscode.languages.registerCompletionItemProvider(
         { language: 'scminput' },
         completionProvider
