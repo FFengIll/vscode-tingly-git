@@ -25,6 +25,7 @@
         "onCommand:tingly-git.addRemote",
         "onCommand:tingly-git.addFile",
         "onCommand:tingly-git.logCurrentFile",
+        "onCommand:tingly-git.openLfsDiff",
         "onCommand:tingly-git.gitignore",
         "onCommand:tingly-git.license"
     ],
@@ -47,6 +48,11 @@
                 "category": "Tingly Git"
             },
             {
+                "command": "tingly-git.openLfsDiff",
+                "title": "Open LFS Diff",
+                "category": "Tingly Git"
+            },
+            {
                 "command": "tingly-git.gitignore",
                 "title": "Manage .gitignore",
                 "category": "Tingly Git"
@@ -62,6 +68,18 @@
                 {
                     "command": "tingly-git.addFile",
                     "group": "Tingly Git"
+                },
+                {
+                    "command": "tingly-git.openLfsDiff",
+                    "group": "Tingly Git",
+                    "when": "resourceScheme == file"
+                }
+            ],
+            "scm/resourceState/context": [
+                {
+                    "command": "tingly-git.openLfsDiff",
+                    "group": "navigation@50",
+                    "when": "scmProvider == git && (scmResourceGroup == workingTree || scmResourceGroup == index)"
                 }
             ],
             "editor/context": [
@@ -72,6 +90,11 @@
                 {
                     "command": "tingly-git.logCurrentFile",
                     "group": "Tingly Git"
+                },
+                {
+                    "command": "tingly-git.openLfsDiff",
+                    "group": "Tingly Git",
+                    "when": "resourceScheme == file"
                 }
             ],
             "editor/title/context": [
@@ -84,6 +107,11 @@
                     "command": "tingly-git.logCurrentFile",
                     "group": "Tingly Git",
                     "when": "resourceExtname"
+                },
+                {
+                    "command": "tingly-git.openLfsDiff",
+                    "group": "Tingly Git",
+                    "when": "resourceScheme == file"
                 }
             ]
         },

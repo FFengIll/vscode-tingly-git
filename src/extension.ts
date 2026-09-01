@@ -3,6 +3,8 @@ import simpleGit, { SimpleGit } from 'simple-git';
 import { loadGitignoreTemplates, GitignoreTemplate } from './githubTemplates';
 import { licenseTemplates, LicenseTemplate } from './licenseTemplates';
 import { StagedFilesCompletionProvider } from './completionProvider';
+import { openLfsDiff } from './lfsDiffCommand';
+import { LfsDiffContentProvider, lfsDiffScheme } from './lfsDiffContentProvider';
 let git: SimpleGit;
 let extensionUri: vscode.Uri;
 
@@ -30,13 +32,20 @@ export function activate(context: vscode.ExtensionContext) {
     );
     context.subscriptions.push(completionDisposable);
 
+    const lfsDiffProvider = vscode.workspace.registerTextDocumentContentProvider(
+        lfsDiffScheme,
+        new LfsDiffContentProvider()
+    );
+    context.subscriptions.push(lfsDiffProvider);
+
     // Register all Git commands
     const commands = [
         vscode.commands.registerCommand('tingly-git.addFile', (resource) => gitAddFile(resource)),
         vscode.commands.registerCommand('tingly-git.addRemote', gitAddRemote),
         vscode.commands.registerCommand('tingly-git.logCurrentFile', () => gitLogCurrentFile()),
         vscode.commands.registerCommand('tingly-git.gitignore', gitignore),
-        vscode.commands.registerCommand('tingly-git.license', license)
+        vscode.commands.registerCommand('tingly-git.license', license),
+        vscode.commands.registerCommand('tingly-git.openLfsDiff', (resource) => openLfsDiff(resource))
     ];
 
     commands.forEach(command => context.subscriptions.push(command));
@@ -249,7 +258,9 @@ async function gitignore() {
             placeHolder: 'Select an action for .gitignore'
         });
 
-        if (!action) return;
+        if (!action) {
+            return;
+        }
 
         switch (action) {
             case 'Add template from collection':

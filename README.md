@@ -1,6 +1,6 @@
 # Tingly Git
 
-A VS Code extension that lets you **git add files/folders via right-click**, view **file history logs**, and manage **.gitignore and LICENSE** — all without leaving the editor.
+A VS Code extension that lets you **diff Git LFS/Xet text files normally**, **git add files/folders via right-click**, view **file history logs**, and manage **.gitignore and LICENSE** — all without leaving the editor.
 
 > **Philosophy**: We extend VSCode's native Git with unique convenience features. No duplication, just smart enhancements to your daily Git workflow.
 
@@ -12,6 +12,7 @@ VSCode's Source Control panel is excellent for Git basics. Tingly Git adds the *
 
 | Feature                         | Why It Matters                                                                                          |
 | ------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| **LFS/Xet Native Diff**           | Materialize the `HEAD` version through Git filters, then compare it in VS Code's standard text diff editor       |
 | **Smart Gitignore Templates**   | Browse & insert 50+ curated templates from GitHub's official collection - faster than manual copy-paste |
 | **License Management**          | Browse & insert license templates from the official collection - set up your project license in seconds |
 | **File History Log**            | Quick access to git log for any file - no terminal needed                                               |
@@ -26,18 +27,26 @@ Access via Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`):
 
 | Command                         | What It Does                                                  |
 | ------------------------------- | ------------------------------------------------------------- |
+| `Tingly Git: Open LFS Diff`       | Compare materialized `HEAD` content with the working-tree text file |
 | `Tingly Git: Manage .gitignore` | Browse and insert templates from GitHub's official collection |
 | `Tingly Git: Manage LICENSE`   | Browse and insert license templates from the official collection |
 | `Tingly Git: Log Current File`  | Show commit history for the active file                       |
 | `Tingly Git: Add Remote`        | Add a named remote to your repository                         |
 
-**Also available via context menu** - Right-click files/folders for "Git: Add File/Directory" and "Git: Log Current File".
+**Also available via context menu** — Right-click files/folders or a Git Source Control change for the relevant Tingly Git command.
+
+### LFS/Xet Diff
+
+For a modified text file tracked by Git LFS, right-click the file in Source Control and select **Open LFS Diff**. Tingly Git asks Git for the filtered `HEAD` content with `git cat-file --filters`, then opens that virtual document against the working-tree file in VS Code's native diff editor.
+
+Xet-backed Hugging Face repositories use the same flow when Git LFS and the Git-Xet custom transfer agent are installed and configured. Authentication, downloading, and object materialization remain Git's responsibility. The MVP compares `HEAD` with the working tree and supports text files only.
 
 ### Context Menu
 
 Right-click on:
-- Files/Folders in explorer → "Git: Add File/Directory"
-- Editor/tabs → "Git: Add File/Directory", "Git: Log Current File"
+- Git Source Control changes → "Open LFS Diff"
+- Files/Folders in explorer → "Add File/Directory", "Open LFS Diff"
+- Editor/tabs → "Add File/Directory", "Log Current File", "Open LFS Diff"
 
 ### Gitignore Templates
 
@@ -73,6 +82,8 @@ Perfect for writing clear, descriptive commit messages that reference specific f
 
 - VS Code 1.90.0 or higher
 - Git installed on your system
+- Git LFS installed for LFS-backed files
+- Git-Xet installed/configured when the remote selects Xet transfers
 
 ## Release Notes
 

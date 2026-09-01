@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+
+- **Git LFS/Xet text diff**: Materialize a file's `HEAD` content through Git filters and compare it with the working tree in VS Code's native diff editor
+
+### Changed
+
 - Support fallback to local gitignore template file when network is unavailable
 
 ## [0.260401.0] - 2026-04-01
