@@ -2,7 +2,7 @@
     "name": "tingly-git",
     "displayName": "Tingly Git",
     "description": "Manage .gitignore and LICENSE, git add files/folders, view file history logs, and so on — all without leaving the editor",
-    "version": "0.260428.0",
+    "version": "0.260901.0",
     "author": {
         "name": "Tingly"
     },
